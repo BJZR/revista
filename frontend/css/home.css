@@ -1,0 +1,300 @@
+/* Home / Projects page */
+.home-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(1000px 400px at 80% -10%, rgba(139, 92, 246, 0.12), transparent 60%),
+        radial-gradient(800px 400px at 0% 10%, rgba(255, 61, 127, 0.08), transparent 60%),
+        var(--bg);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top bar */
+.home-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 28px;
+    background: rgba(13, 15, 22, 0.65);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.home-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.home-brand .logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255, 61, 127, 0.35);
+}
+
+.home-user-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-user {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.home-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.5px;
+}
+
+/* Welcome hero */
+.home-welcome {
+    padding: 40px 40px 8px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.home-welcome h1 {
+    font-family: var(--font-heading);
+    font-size: 34px;
+    margin: 0 0 6px;
+    letter-spacing: -0.5px;
+}
+
+.home-welcome .home-subtitle {
+    color: var(--text-muted);
+    margin: 0 0 22px;
+    font-size: 14px;
+}
+
+#newProjectBtn {
+    padding: 10px 22px;
+    font-size: 14px;
+}
+
+/* Grid */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+    padding: 24px 40px 56px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+}
+
+/* New project tile */
+.new-project-tile {
+    border: 2px dashed var(--border-light);
+    border-radius: 14px;
+    background: rgba(255, 61, 127, 0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    aspect-ratio: 800 / 1100;
+    transition: all 0.2s ease;
+    color: var(--text-muted);
+}
+
+.new-project-tile:hover {
+    border-color: var(--primary);
+    background: rgba(255, 61, 127, 0.07);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+}
+
+.new-project-tile .plus {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    font-size: 28px;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(255, 61, 127, 0.35);
+    line-height: 1;
+}
+
+.new-project-tile span {
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+/* Project card */
+.project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    border-color: rgba(255, 61, 127, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.project-cover {
+    width: 100%;
+    aspect-ratio: 800 / 1100;
+    background: linear-gradient(135deg, #20242f, #14161f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.project-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-cover img {
+    transform: scale(1.03);
+}
+
+.project-cover .placeholder {
+    font-size: 44px;
+    opacity: 0.35;
+}
+
+.project-info {
+    padding: 13px 15px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-darker);
+}
+
+.project-title {
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.project-meta .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--success);
+    display: inline-block;
+}
+
+.project-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: all 0.18s ease;
+}
+
+.project-card:hover .project-actions {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.project-actions button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(10, 11, 16, 0.8);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.15s;
+}
+
+.project-actions button:hover {
+    background: var(--bg-hover);
+}
+
+.project-actions button.rename:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.project-actions button.delete:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+.project-actions button .icon {
+    font-size: 15px;
+}
+
+/* Empty state */
+.home-empty {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.home-empty .empty-icon {
+    font-size: 54px;
+    margin-bottom: 14px;
+    opacity: 0.5;
+}
+
+.home-empty p {
+    margin-bottom: 20px;
+    font-size: 15px;
+}

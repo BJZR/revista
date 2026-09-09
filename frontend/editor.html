@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revista Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body class="editor-page">
+    <header class="editor-header">
+        <div class="header-left">
+            <button id="backBtn" class="btn btn-icon" title="Volver">←</button>
+            <button id="undoBtn" class="btn btn-icon" title="Deshacer (Ctrl+Z)">↶</button>
+            <button id="redoBtn" class="btn btn-icon" title="Rehacer (Ctrl+Y)">↷</button>
+            <h2 id="magazineTitle" contenteditable="true">Sin título</h2>
+        </div>
+        <div class="header-center">
+            <span id="pageIndicator">Página 1 de 1</span>
+        </div>
+        <div class="header-right">
+            <button id="saveBtn" class="btn btn-small">Guardar</button>
+            <button id="exportPdfBtn" class="btn btn-primary btn-small">Exportar PDF</button>
+            <button id="logoutBtn" class="btn btn-icon" title="Cerrar sesión">↻</button>
+        </div>
+    </header>
+
+    <div class="editor-layout">
+        <aside class="sidebar-left" id="sidebarLeft">
+            <div class="sidebar-bar">
+                <button id="collapseLeftBtn" class="btn btn-icon" title="Minimizar panel">◀</button>
+            </div>
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Páginas</h3>
+                <div id="pageList" class="page-list"></div>
+                <button id="addPageBtn" class="btn btn-ghost btn-small btn-block">+ Nueva página</button>
+            </div>
+
+            <div class="tool-section-label"></div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Herramientas</h3>
+                <div class="tool-row">
+                    <button class="tool-btn active" data-tool="select" title="Seleccionar">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l7 16 2.5-7.5L21 10z"/></svg>
+                    </button>
+                    <button class="tool-btn" data-tool="text" title="Agregar texto">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg>
+                    </button>
+                    <button class="tool-btn" data-tool="image" title="Agregar imagen">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5-9 9"/></svg>
+                    </button>
+                    <button class="tool-btn" data-tool="rect" title="Rectángulo">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                    </button>
+                    <button class="tool-btn" data-tool="circle" title="Círculo">
+                        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Resolución de imagen</h3>
+                <select id="imageResSel" title="Cómo insertar el tamaño de las imágenes">
+                    <option value="original">Original</option>
+                    <option value="mayor">Mayor</option>
+                    <option value="menor">Menor</option>
+                    <option value="encajar">Encajar a página</option>
+                </select>
+                <p class="hint">Al insertar una imagen, ajusta su tamaño a la de mayor o menor resolución de la galería, o encájala en la página</p>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Capas</h3>
+                <div id="layersList" class="layers-list"></div>
+            </div>
+        </aside>
+
+        <main class="canvas-container">
+            <div class="canvas-wrapper">
+                <canvas id="editorCanvas"></canvas>
+            </div>
+        </main>
+
+        <aside class="sidebar-right" id="sidebarRight">
+            <div class="sidebar-bar">
+                <button id="collapseRightBtn" class="btn btn-icon" title="Minimizar panel">▶</button>
+            </div>
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Propiedades</h3>
+                <div id="propertiesPanel">
+                    <p class="hint">Selecciona un elemento para editar sus propiedades</p>
+                </div>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Formato de página</h3>
+                <select id="pageFormatSel">
+                    <optgroup label="Estándar">
+                        <option value="a4">A4 (210 × 297 mm)</option>
+                        <option value="a5">A5 (148 × 210 mm)</option>
+                        <option value="letter">Carta (8.5 × 11 in)</option>
+                        <option value="legal">Oficio (8.5 × 14 in)</option>
+                        <option value="a3">A3 (297 × 420 mm)</option>
+                        <option value="square">Cuadrado 1:1</option>
+                        <option value="photo">Foto 4 × 6 in</option>
+                    </optgroup>
+                    <optgroup label="Redes sociales">
+                        <option value="igpost">Instagram Post (1080×1080)</option>
+                        <option value="igstory">Instagram Historia (1080×1920)</option>
+                    </optgroup>
+                    <optgroup label="Revista">
+                        <option value="revista800" selected>Revista (800 × 1100)</option>
+                    </optgroup>
+                    <option value="custom">Personalizado…</option>
+                </select>
+                <div id="customSizeRow" class="hidden" style="display:flex;gap:6px;margin-top:6px">
+                    <input type="number" id="customW" placeholder="Ancho px" min="100">
+                    <input type="number" id="customH" placeholder="Alto px" min="100">
+                </div>
+                <label style="margin-top:8px">Resolución (dpi)</label>
+                <select id="pageDpiSel">
+                    <option value="72">72</option>
+                    <option value="96">96</option>
+                    <option value="150" selected>150</option>
+                    <option value="300">300</option>
+                </select>
+                <button id="applyFormatBtn" class="btn btn-small btn-block" style="margin-top:8px">Aplicar formato</button>
+                <button id="fitToImageBtn" class="btn btn-small btn-block">Ajustar a imagen seleccionada</button>
+                <p class="format-info" id="formatInfo"></p>
+
+                <div class="prop-group">
+                    <label>Color de fondo</label>
+                    <div id="bgColorSwatches" class="bg-color-row"></div>
+                    <div class="bg-color-row" style="margin-top:6px">
+                        <input type="color" id="bgColorPicker" value="#ffffff" style="flex:1;min-width:0">
+                        <button id="bgColorResetBtn" class="btn btn-small">Blanco</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Imágenes</h3>
+                <input type="file" id="imageUpload" accept="image/*" multiple hidden>
+                <button id="uploadImageBtn" class="btn btn-small btn-block">Subir imagen</button>
+                <div id="imageGallery" class="image-gallery"></div>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Fuentes</h3>
+                <input type="file" id="fontUpload" accept=".ttf,.otf,.woff,.woff2" multiple hidden>
+                <input type="file" id="fontZipUpload" accept=".zip" hidden>
+                <button id="addFontBtn" class="btn btn-small btn-block">Agregar fuente(s)</button>
+                <button id="addFontZipBtn" class="btn btn-small btn-block">Subir fuentes (.zip)</button>
+                <div id="fontList" class="font-list"></div>
+            </div>
+
+            <div class="tool-section" data-collapsible>
+                <h3 class="section-toggle">Plantillas</h3>
+                <button id="saveTemplateBtn" class="btn btn-small btn-block">Guardar como plantilla</button>
+                <div id="templateList" class="template-list"></div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="modal-overlay hidden" id="exportModal">
+        <div class="modal">
+            <h3>Exportar PDF</h3>
+            <div class="prop-group">
+                <label>Nombre del archivo</label>
+                <input type="text" id="exportNameInput">
+            </div>
+            <div class="prop-group">
+                <label>Resolución de exportación</label>
+                <select id="exportDpiSel">
+                    <option value="72">72 dpi</option>
+                    <option value="96">96 dpi</option>
+                    <option value="150">150 dpi</option>
+                    <option value="300">300 dpi</option>
+                </select>
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" id="rememberExportName" checked>
+                Recordar nombre para la próxima
+            </label>
+            <div class="modal-actions">
+                <button id="exportCancelBtn" class="btn btn-small">Cancelar</button>
+                <button id="exportConfirmBtn" class="btn btn-primary btn-small">Exportar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/editor.js"></script>
+</body>
+</html>
