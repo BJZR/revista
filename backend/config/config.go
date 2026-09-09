@@ -21,7 +21,7 @@ func Load() *Config {
 		DBPassword: getEnv("DB_PASSWORD", "revista123"),
 		DBName:     getEnv("DB_NAME", "revista_db"),
 		JWTSecret:  getEnv("JWT_SECRET", "revista-secret-key-change-in-production"),
-		ServerPort: getEnv("SERVER_PORT", "8080"),
+		ServerPort: getEnv("SERVER_PORT", "9000"),
 		UploadDir:  getEnv("UPLOAD_DIR", "uploads"),
 	}
 }
