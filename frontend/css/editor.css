@@ -763,6 +763,12 @@
     color: var(--accent);
 }
 
+.page-item .page-actions .action-btn[disabled] {
+    opacity: 0.25;
+    cursor: default;
+    pointer-events: none;
+}
+
 /* Context menu */
 .context-menu {
     position: fixed;

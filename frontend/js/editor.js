@@ -1209,6 +1209,8 @@ function renderPageList() {
                 <span class="page-name">${escapeHtml(p.name || `Página ${p.page_number}`)}</span>
             </div>
             <div class="page-actions">
+                <button class="action-btn" data-action="up" title="Subir página" ${p.page_number === 1 ? 'disabled' : ''}>↑</button>
+                <button class="action-btn" data-action="down" title="Bajar página" ${p.page_number === pages.length ? 'disabled' : ''}>↓</button>
                 <button class="action-btn" data-action="menu" title="Opciones">⋯</button>
             </div>`;
         item.addEventListener('click', (e) => {
@@ -1217,6 +1219,10 @@ function renderPageList() {
                 e.stopPropagation();
                 if (action.dataset.action === 'menu') {
                     openPageMenu(item, p);
+                } else if (action.dataset.action === 'up') {
+                    movePage(p, -1);
+                } else if (action.dataset.action === 'down') {
+                    movePage(p, 1);
                 }
                 return;
             }
@@ -1226,6 +1232,22 @@ function renderPageList() {
     });
     const idx = pages.findIndex(p => p.id === currentPageId);
     document.getElementById('pageIndicator').textContent = `Página ${idx + 1} de ${pages.length}`;
+}
+
+async function movePage(page, dir) {
+    const idx = pages.findIndex(p => p.id === page.id);
+    const swapIdx = idx + dir;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= pages.length) return;
+    [pages[idx], pages[swapIdx]] = [pages[swapIdx], pages[idx]];
+    pages.forEach((p, i) => p.page_number = i + 1);
+    try {
+        await api.reorderPages(currentMagazineId, pages.map(p => p.id));
+        renderPageList();
+    } catch (err) {
+        console.error(err);
+        pages = await api.getPages(currentMagazineId);
+        renderPageList();
+    }
 }
 
 function renderLayers() {
