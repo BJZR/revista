@@ -206,6 +206,14 @@ func (r *Repo) ReorderPages(ctx context.Context, magazineID string, pageIDs []st
 	}
 	defer tx.Rollback(ctx)
 
+	// Shift all page_numbers into a free range so the UNIQUE(magazine_id,
+	// page_number) constraint is never violated while assigning the new order.
+	if _, err := tx.Exec(ctx,
+		`UPDATE pages SET page_number = page_number + 100000 WHERE magazine_id=$1`,
+		magazineID); err != nil {
+		return err
+	}
+
 	for i, pageID := range pageIDs {
 		_, err := tx.Exec(ctx,
 			`UPDATE pages SET page_number=$2 WHERE id=$1 AND magazine_id=$3`,
